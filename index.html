@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<!-- saved from url=(0049)file:///C:/Users/kawaguchi/Downloads/index_1.html -->
+<html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>経理チェックリスト</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f3; min-height: 100vh; }
+
+#lock-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #f5f5f3; }
+.lock-card { background: #fff; border-radius: 16px; border: 0.5px solid #e0dfd7; padding: 2rem 2.5rem; width: 320px; text-align: center; }
+.lock-card h1 { font-size: 18px; font-weight: 500; margin-bottom: 6px; color: #1a1a18; }
+.lock-card p { font-size: 13px; color: #73726c; margin-bottom: 20px; }
+.lock-card input { width: 100%; padding: 10px 14px; border: 0.5px solid #c8c7bf; border-radius: 8px; font-size: 14px; outline: none; margin-bottom: 10px; }
+.lock-card input:focus { border-color: #378add; box-shadow: 0 0 0 3px rgba(55,138,221,0.12); }
+.lock-card button { width: 100%; padding: 10px; background: #1a1a18; color: #fff; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; }
+.lock-card button:hover { background: #333; }
+.lock-error { font-size: 12px; color: #e24b4a; margin-top: 6px; display: none; }
+
+#app { display: none; max-width: 640px; margin: 0 auto; padding: 24px 16px 48px; }
+.app-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.app-title { font-size: 16px; font-weight: 500; color: #1a1a18; }
+.app-sub { font-size: 12px; color: #73726c; }
+.btn-reset { font-size: 12px; padding: 5px 14px; border-radius: 8px; border: 0.5px solid #c8c7bf; background: #fff; color: #73726c; cursor: pointer; }
+.btn-reset:hover { background: #f1efe8; }
+.prog-wrap { background: #e8e7df; border-radius: 999px; height: 6px; margin: 10px 0 4px; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 999px; background: #1d9e75; transition: width 0.3s; }
+.prog-label { font-size: 12px; color: #73726c; }
+.done-banner { display: none; background: #e1f5ee; color: #0f6e56; border-radius: 10px; padding: 10px 16px; font-size: 13px; font-weight: 500; margin-top: 12px; text-align: center; }
+.tab-bar { display: flex; gap: 4px; margin: 16px 0; }
+.tab { padding: 6px 18px; border-radius: 8px; border: 0.5px solid #d3d1c7; font-size: 13px; cursor: pointer; background: #fff; color: #73726c; }
+.tab.active { background: #f1efe8; color: #1a1a18; border-color: #b4b2a9; font-weight: 500; }
+.sec-label { font-size: 11px; font-weight: 500; color: #888780; letter-spacing: 0.06em; margin: 16px 0 4px; text-transform: uppercase; }
+.row { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; cursor: pointer; border: 0.5px solid transparent; }
+.row:hover { background: #f5f5f3; }
+.row.done { opacity: 0.45; }
+.box { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid #b4b2a9; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.row.done .box { background: #1d9e75; border-color: #1d9e75; }
+.chk { display: none; color: #fff; font-size: 11px; }
+.row.done .chk { display: block; }
+.row-label { font-size: 14px; color: #1a1a18; flex: 1; }
+.row.done .row-label { text-decoration: line-through; color: #888780; }
+.freq { font-size: 11px; padding: 2px 7px; border-radius: 999px; border: 0.5px solid #d3d1c7; color: #888780; white-space: nowrap; }
+.view { display: none; }
+.view.active { display: block; }
+.week-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
+.wk-card { border: 0.5px solid #d3d1c7; border-radius: 8px; padding: 10px; background: #fff; }
+.wk-title { font-size: 12px; color: #73726c; margin-bottom: 6px; font-weight: 500; }
+.wk-row { display: flex; align-items: center; gap: 6px; padding: 3px 0; cursor: pointer; }
+.wk-box { width: 14px; height: 14px; border-radius: 3px; border: 1.5px solid #b4b2a9; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.wk-row.done .wk-box { background: #1d9e75; border-color: #1d9e75; }
+.wk-chk { display: none; color: #fff; font-size: 9px; }
+.wk-row.done .wk-chk { display: block; }
+.wk-label { font-size: 12px; color: #1a1a18; }
+.wk-row.done .wk-label { text-decoration: line-through; color: #888780; }
+</style>
+</head>
+<body>
+
+<div id="lock-screen">
+  <div class="lock-card">
+    <h1>経理チェックリスト</h1>
+    <p>パスワードを入力してください</p>
+    <input type="password" id="pw-input" placeholder="パスワード" onkeydown="if(event.key===&#39;Enter&#39;)checkPw()">
+    <button onclick="checkPw()">ログイン</button>
+    <div class="lock-error" id="pw-error">パスワードが違います</div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="app-header">
+    <div>
+      <div class="app-title" id="view-title">今週のチェック</div>
+      <div class="app-sub" id="view-sub"></div>
+    </div>
+    <button class="btn-reset" onclick="resetCurrent()">リセット</button>
+  </div>
+  <div class="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="prog-label" id="prog-label">0 / 0 完了</div>
+  <div class="done-banner" id="done-banner">✓ すべて完了！</div>
+
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab(&#39;week&#39;,this)">週次</button>
+    <button class="tab" onclick="switchTab(&#39;month&#39;,this)">月次</button>
+  </div>
+
+  <div class="view active" id="view-week">
+    <div class="sec-label">経理入力</div>
+    <div class="row" data-key="w-1" onclick="toggle(this)"><div class="box"><span class="chk">✓</span></div><span class="row-label">当座預金の仕分け（会計ソフト入力）</span><span class="freq">週1回</span></div>
+    <div class="row" data-key="w-2" onclick="toggle(this)"><div class="box"><span class="chk">✓</span></div><span class="row-label">現金の仕分け（会計ソフト入力）</span><span class="freq">週1回</span></div>
+    <div class="row" data-key="w-3" onclick="toggle(this)"><div class="box"><span class="chk">✓</span></div><span class="row-label">会計ソフト入力後の確認</span><span class="freq">週1回</span></div>
+    <div class="sec-label">請求書管理</div>
+    <div class="row" data-key="w-4" onclick="toggle(this)"><div class="box"><span class="chk">✓</span></div><span class="row-label">請求書のスキャン・電子保存</span><span class="freq">都度</span></div>
+  </div>
+
+  <div class="view" id="view-month">
+    <div class="sec-label">経理入力</div>
+    <div class="row" data-key="m-1" onclick="toggle(this)"><div class="box"><span class="chk">✓</span></div><span class="row-label">支払台帳（キントーン・エクセル）</span><span class="freq">毎月</span></div>
+    <div class="sec-label">請求書管理</div>
+    <div class="row" data-key="m-2" onclick="toggle(this)"><div class="box"><span class="chk">✓</span></div><span class="row-label">請求書の整理・支払台帳記入</span><span class="freq">毎月</span></div>
+    <div class="row" data-key="m-3" onclick="toggle(this)"><div class="box"><span class="chk">✓</span></div><span class="row-label">キントーン支払入力</span><span class="freq">毎月</span></div>
+    <div class="row" data-key="m-4" onclick="toggle(this)"><div class="box"><span class="chk">✓</span></div><span class="row-label">リコー電子保存サービスに登録</span><span class="freq">毎月</span></div>
+    <div class="sec-label">給与・賞与</div>
+    <div class="row" data-key="m-5" onclick="toggle(this)"><div class="box"><span class="chk">✓</span></div><span class="row-label">給与計算とチェック</span><span class="freq">毎月</span></div>
+    <div class="row" data-key="m-6" onclick="toggle(this)"><div class="box"><span class="chk">✓</span></div><span class="row-label">給与計算の打ち出し</span><span class="freq">毎月</span></div>
+    <div class="sec-label">月末処理</div>
+    <div class="row" data-key="m-7" onclick="toggle(this)"><div class="box"><span class="chk">✓</span></div><span class="row-label">資料用意・銀行通帳記入</span><span class="freq">月末</span></div>
+    <div class="row" data-key="m-8" onclick="toggle(this)"><div class="box"><span class="chk">✓</span></div><span class="row-label">市県民税の支払い</span><span class="freq">毎月</span></div>
+
+    <div class="sec-label" style="margin-top:20px;">週次チェック状況（今月）</div>
+    <div class="week-grid">
+      <div class="wk-card"><div class="wk-title">第1週</div>
+        <div class="wk-row" data-key="wk-1-1" onclick="toggleWk(this)"><div class="wk-box"><span class="wk-chk">✓</span></div><span class="wk-label">仕分け入力</span></div>
+        <div class="wk-row" data-key="wk-1-2" onclick="toggleWk(this)"><div class="wk-box"><span class="wk-chk">✓</span></div><span class="wk-label">確認チェック</span></div>
+      </div>
+      <div class="wk-card"><div class="wk-title">第2週</div>
+        <div class="wk-row" data-key="wk-2-1" onclick="toggleWk(this)"><div class="wk-box"><span class="wk-chk">✓</span></div><span class="wk-label">仕分け入力</span></div>
+        <div class="wk-row" data-key="wk-2-2" onclick="toggleWk(this)"><div class="wk-box"><span class="wk-chk">✓</span></div><span class="wk-label">確認チェック</span></div>
+      </div>
+      <div class="wk-card"><div class="wk-title">第3週</div>
+        <div class="wk-row" data-key="wk-3-1" onclick="toggleWk(this)"><div class="wk-box"><span class="wk-chk">✓</span></div><span class="wk-label">仕分け入力</span></div>
+        <div class="wk-row" data-key="wk-3-2" onclick="toggleWk(this)"><div class="wk-box"><span class="wk-chk">✓</span></div><span class="wk-label">確認チェック</span></div>
+      </div>
+      <div class="wk-card"><div class="wk-title">第4週</div>
+        <div class="wk-row" data-key="wk-4-1" onclick="toggleWk(this)"><div class="wk-box"><span class="wk-chk">✓</span></div><span class="wk-label">仕分け入力</span></div>
+        <div class="wk-row" data-key="wk-4-2" onclick="toggleWk(this)"><div class="wk-box"><span class="wk-chk">✓</span></div><span class="wk-label">確認チェック</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const PASSWORD = 'kawaguchi2025';
+
+function checkPw() {
+  const val = document.getElementById('pw-input').value;
+  if (val === PASSWORD) {
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    initApp();
+  } else {
+    document.getElementById('pw-error').style.display = 'block';
+  }
+}
+
+let currentTab = 'week';
+
+function getYearMonth() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+}
+function getWeekNum() {
+  return Math.ceil(new Date().getDate() / 7);
+}
+function storageKey(key) {
+  const prefix = currentTab === 'week'
+    ? 'w-' + getYearMonth() + '-wk' + getWeekNum()
+    : 'm-' + getYearMonth();
+  return 'keiri-' + prefix + '-' + key;
+}
+
+function loadState() {
+  const view = document.getElementById('view-' + currentTab);
+  view.querySelectorAll('.row[data-key]').forEach(row => {
+    if (localStorage.getItem(storageKey(row.dataset.key)) === '1') applyDone(row, true);
+  });
+  if (currentTab === 'month') {
+    view.querySelectorAll('.wk-row[data-key]').forEach(row => {
+      const k = 'keiri-m-' + getYearMonth() + '-' + row.dataset.key;
+      if (localStorage.getItem(k) === '1') applyWkDone(row, true);
+    });
+  }
+  updateProgress();
+}
+
+function applyDone(row, done) {
+  row.classList.toggle('done', done);
+}
+function applyWkDone(row, done) {
+  row.classList.toggle('done', done);
+}
+
+function toggle(row) {
+  const isDone = !row.classList.contains('done');
+  applyDone(row, isDone);
+  localStorage.setItem(storageKey(row.dataset.key), isDone ? '1' : '0');
+  updateProgress();
+}
+
+function toggleWk(row) {
+  const isDone = !row.classList.contains('done');
+  applyWkDone(row, isDone);
+  const k = 'keiri-m-' + getYearMonth() + '-' + row.dataset.key;
+  localStorage.setItem(k, isDone ? '1' : '0');
+}
+
+function updateProgress() {
+  const view = document.getElementById('view-' + currentTab);
+  const rows = view.querySelectorAll('.row[data-key]');
+  const done = [...rows].filter(r => r.classList.contains('done')).length;
+  const total = rows.length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = done + ' / ' + total + ' 完了';
+  document.getElementById('done-banner').style.display = (done === total && total > 0) ? 'block' : 'none';
+}
+
+function resetCurrent() {
+  const view = document.getElementById('view-' + currentTab);
+  view.querySelectorAll('.row[data-key]').forEach(row => {
+    applyDone(row, false);
+    localStorage.setItem(storageKey(row.dataset.key), '0');
+  });
+  if (currentTab === 'month') {
+    view.querySelectorAll('.wk-row[data-key]').forEach(row => {
+      applyWkDone(row, false);
+      localStorage.setItem('keiri-m-' + getYearMonth() + '-' + row.dataset.key, '0');
+    });
+  }
+  updateProgress();
+}
+
+function switchTab(tab, btn) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('view-week').classList.toggle('active', tab === 'week');
+  document.getElementById('view-month').classList.toggle('active', tab === 'month');
+  const now = new Date();
+  const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  document.getElementById('view-title').textContent = tab === 'week' ? '今週のチェック' : '今月のチェック';
+  document.getElementById('view-sub').textContent = tab === 'week'
+    ? now.getFullYear() + '年' + months[now.getMonth()] + '第' + getWeekNum() + '週'
+    : now.getFullYear() + '年' + months[now.getMonth()];
+  loadState();
+}
+
+function initApp() {
+  switchTab('week', document.querySelector('.tab.active'));
+}
+</script>
+
+
+</body></html>
